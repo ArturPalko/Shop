@@ -1,0 +1,11 @@
+﻿@model NewBooksViewModel
+
+
+<div class="row mt-5 mb-2">
+    @{
+        foreach (Book book in Model.newBooks)
+        {
+            @Html.Partial("AllBooks", book)
+        }
+    }
+</div>

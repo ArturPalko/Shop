@@ -1,0 +1,15 @@
+﻿
+<div class="row mt-5 mb-2">
+    @{
+        foreach (var book in Model.allBooks)
+        {
+            <div class="col-lg-4">
+                <img class="img-thumbnail" src="@book.img" alt="@book.name" />
+                <h2>@book.name</h2>
+                <p>@book.shortDesc</p>
+                <p>Ціна: @book.price.ToString()</p>
+                <p><a class="btn btn-warning" asp-controller="ShopCart" asp-action="addToCart" asp-route-id="@book.id">Додати у кошик</a></p>
+            </div>
+        }
+    }
+</div>

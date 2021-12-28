@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <header>
+        <nav>
+            <ul id="hover-menu">
+                <li><a href="/NewBooks/">Новинки</a>
+                <li><a href="/Books/List">Головна</a>
+                <li><a href="/Books/List/Art">Художня література</a>
+                <li><a href="/Books/List/Science">Наукова література</a>
+                <li><a href="/ShopCart/">Кошик</a>
+            </ul>
+        </nav>
+
+    </header>
+    <div class="container mt-5">
+        @RenderBody()
+    </div>
+    <script src="~/js/bootstrap.min.js"></script>
+</body>
+</html>

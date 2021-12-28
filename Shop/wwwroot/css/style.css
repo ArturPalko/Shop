@@ -1,0 +1,46 @@
+﻿.col-lg-4{
+    margin-top: 20px;
+}
+body {
+    font: 18px Calibri, Tahoma, sans-serif;
+    width: 80%;
+    margin:0;
+}
+
+
+nav ul li {
+    margin: 0;
+    padding: 0;
+}
+
+nav ul {
+    list-style-type: none;
+    margin-bottom: 0px;
+}
+nav ul li a {
+        text-decoration: none;
+        color: #fff;
+}
+
+        nav ul li a:hover {
+            text-decoration: none;
+        }
+#hover-menu {
+    background: #3ca010;
+}
+
+    #hover-menu li {
+        display: inline-block;
+    }
+
+#hover-menu li a {
+    display: block;
+    padding: 10px;
+    border-right: 1px solid #1e4e09;
+    color: aqua
+
+}
+
+#hover-menu li a:hover {
+        background: #77dd4a;
+}
