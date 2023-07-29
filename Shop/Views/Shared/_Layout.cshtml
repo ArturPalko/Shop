@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Shop</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+
+    <style>
+        .icon-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .icon {
+            width: 30px;
+            height: 30px;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #heart {
+            margin-right: 20px;
+        }
+
+        #cart {
+            margin-left: 100px; /* Добавили новое свойство margin-left */
+        }
+
+        .icon:hover {
+            transform: scale(1.2);
+        }
+    </style>
+
+    </style>
+
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Shop</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <!-- Удалены Home и Privacy из навигационного меню -->
+                    </ul>
+                    <!-- Иконка, расположенная в правом конце -->
+                    <div class="icon-container">
+                        <!--  <div class="icon" id="user" style="--hover-image: url('/icon/active/user_gold.png'); background-image: url('/icon/standart/user.png');"></div>-->
+                        <!--   <div class="icon" id="libra" style="--hover-image: url('/icon/active/libra_gold.png'); background-image: url('/icon/standart/libra.png');"></div>-->
+                        <a href="@Url.Action("Index", "Likes" , new { shopcartid = ViewBag.shopcartid })">
+                            <div class="icon" id="heart" style="--hover-image: url('/icon/active/heart_gold.png'); background-image: url('/icon/standart/heart.png');"></div>
+                        </a>
+                        <a href="@Url.Action("Cart", "Home", new { shopcartid = ViewBag.shopcartid })">
+                            <div class="icon" id="cart" style="--hover-image: url('/icon/active/cart_gold.png'); background-image: url('/icon/standart/cart.png');"></div>
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        var cartIcon = document.getElementById('cart');
+        cartIcon.addEventListener('click', function () {
+            var shopcartid = cartIcon.getAttribute('data-shopcartid');
+            var url = '@Url.Action("Cart", "Home")' + '?shopcartid=' + shopcartid;
+            window.location.href = url;
+        });
+
+        var heartIcon = document.getElementById('heart');
+        heartIcon.addEventListener('click', function () {
+            var url = '@Url.Action("Index", "Likes")';
+            window.location.href = url;
+        });
+
+        var icons = document.querySelectorAll('.icon');
+
+        icons.forEach(function (icon) {
+            var defaultImage = icon.style.backgroundImage;
+            var hoverImage = getComputedStyle(icon).getPropertyValue('--hover-image');
+
+            icon.addEventListener('mouseover', function () {
+                icon.style.backgroundImage = hoverImage;
+            });
+
+            icon.addEventListener('mouseout', function () {
+                icon.style.backgroundImage = defaultImage;
+            });
+        });
+    </script>
+</body>
+</html>
+

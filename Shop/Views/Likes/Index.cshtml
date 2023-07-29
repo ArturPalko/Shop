@@ -1,0 +1,99 @@
+﻿@{
+    ViewData["Title"] = "Likes Page";
+}
+
+<head>
+    <link href="~/css/Home/Common.css" rel="stylesheet" />
+    <link href="~/css/Home/Product-Container.css" rel="stylesheet" />
+    <link href="~/css/Home/site.css" rel="stylesheet" />
+    <link href="~/css/Common.css" rel="stylesheet" />
+</head>
+
+<h3>Ваші вподобання</h3>
+
+<ul class="products-container">
+    @foreach (var product in ViewBag.products)
+    {
+        <li class="products-element">
+            <span class="products-element__name">@product.Product.Name</span>
+            <img class="like-image" src="/likes/Like_added.png" onclick="toggleImage(this)" alt="Like" />
+            <img class="products-element__img" src="@product.Product.Img" />
+            <span class="products-element__price">
+                ⚡️ @product.Product.Price USD
+            </span>
+            <button class="products-element__btn" data-product-name="@product.Product.Name" onclick="addToCart(event)">
+                Додати у кошик
+            </button>
+        </li>
+    }
+</ul>
+
+<script>
+    function toggleImage(image) {
+        var productName = image.parentNode.querySelector('.products-element__name').textContent;
+        var imageUrl = image.src;
+
+        if (imageUrl.endsWith('Like.png')) {
+            image.src = '/likes/Like_added.png';
+            addToLikedList(productName);
+        } else {
+            image.src = '/likes/Like.png';
+            deleteFromLikedList(productName);
+        }
+    }
+
+    function addToLikedList(productName) {
+        $.ajax({
+            url: '/Likes/AddToLikedList',
+            type: 'POST',
+            data: { productName: productName },
+            success: function () {
+                console.log('Товар даданий в список бажань');
+            },
+            error: function () {
+                console.log('Помилка при додавнні');
+            }
+        });
+    }
+
+    function deleteFromLikedList(productName) {
+        $.ajax({
+            url: '/Likes/DeleteFromLikedList',
+            type: 'POST',
+            data: { productName: productName },
+            success: function () {
+                console.log('Товар видалений із спику бажань');
+                location.reload(); 
+            },
+            error: function () {
+                console.log('Помилка при видаленні товара із списку бажань');
+            }
+        });
+    }
+</script>
+
+<script src="~/js/site.js"></script>
+
+<style>
+    .icon-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .like-image {
+        width: 30px;
+        height: 30px;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.3s ease-in-out;
+        margin-right: 20px;
+    }
+
+    .like-image:last-child {
+        margin-right: 0;
+    }
+
+    .like-image:hover {
+        transform: scale(1.2);
+    }
+</style>

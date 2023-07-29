@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<head>
+    <link href="~/css/Home/Category-Buttons.css" rel="stylesheet" />
+    <link href="~/css/Home/Categories-Container.css" rel="stylesheet" />
+    <link href="~/css/Home/Common.css" rel="stylesheet" />
+    <link href="~/css/Home/Product-Container.css" rel="stylesheet" />
+    <link href="~/css/Home/site.css" rel="stylesheet" />
+    <link href="~/css/Common.css" rel="stylesheet" />
+</head>
+
+<div class="categories-container">
+    <h3>Категорії:</h3>
+    <ul class="categories-list">
+        <li><a href="@Url.Action("Index", "Home")" class="category-link" onclick="selectCategory(event, this)">Всі товари</a></li>
+        @foreach (var category in ViewBag.categories)
+        {
+            <li><a href="@Url.Action("Index", "Category", new { name = @category.Name })" class="category-link" onclick="selectCategory(event, this)">@category.Name</a></li>
+        }
+    </ul>
+</div>
+
+
+<span >@ViewBag.shopcatrid</span>
+<ul class="products-container">
+    @foreach (var product in ViewBag.products)
+    {
+        <li class="products-element">
+            <span class="products-element__name">@product.Name</span>
+            <img class="like-image" src="/likes/Like.png" onclick="toggleImage(this)" alt="Like" data-product-name="@product.Name" />
+            <img class="products-element__img" src="@product.Img" />
+            <span class="products-element__price">
+                ⚡️ @product.Price USD
+            </span>
+            <button class="products-element__btn" data-product-name="@product.Name" onclick="addToCart(event)">
+                Додати у кошик
+            </button>
+        </li>
+    }
+</ul>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/js/site.js"></script>
+
+
+
+<style>
+    .icon-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .like-image {
+        width: 30px;
+        height: 30px;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.3s ease-in-out;
+        margin-right: 20px;
+    }
+
+        .like-image:last-child {
+            margin-right: 0;
+        }
+
+        .like-image:hover {
+            transform: scale(1.2);
+        }
+</style>
+
+
+

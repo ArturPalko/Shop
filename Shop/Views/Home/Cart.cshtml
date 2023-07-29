@@ -1,0 +1,211 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        .shop_list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .productItem {
+            background-color: lightgray;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .products-element__img {
+            width: 100px;
+            height: 100px;
+            margin-right: 20px;
+            vertical-align: middle;
+        }
+
+        .products-element__name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .products-element__price {
+            font-size: 24px;
+            color: blue;
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+        }
+
+        .quantity-container {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .quantity-input {
+            width: 30px;
+            text-align: center;
+        }
+
+        .remove-icon {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            background-size: cover;
+            background-image: url('/icon/standart/cross.png');
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(300px, -50%);
+            cursor: pointer;
+        }
+
+        .total-price {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .checkout-button {
+            display: block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Корзина</h1>
+    <ul class="shop_list">
+        @foreach (var product in ViewBag.Products)
+        {
+            <li class="productItem" data-shopcart-id="@product.ShopCartId">
+                <img class="products-element__img" src="@product.Product.Img" />
+                <div style="display: inline-block; vertical-align: top;">
+                    <span class="products-element__name">@product.Product.Name</span>
+                    <span class="products-element__price">@product.Price ₴</span>
+                    <div class="quantity-container">
+                        <button class="quantity-button minus-button" type="button">-</button>
+                        <input class="quantity-input" type="text" name="count" value="@product.Count"
+                               style="text-align: center;" readonly="readonly" />
+                        <button class="quantity-button plus-button" type="button">+</button>
+                    </div>
+                </div>
+                <div class="remove-icon" data-product-name="@product.Product.Name"></div>
+            </li>
+        }
+    </ul>
+
+    <div class="total-price">
+        Загалом: <span id="totalPrice"></span> ₴
+    </div>
+
+    <button class="checkout-button" type="button">Оформити замовлення</button>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var minusButtons = $('.minus-button');
+            var plusButtons = $('.plus-button');
+            var quantityInputs = $('.quantity-input');
+
+            // Обработчик события для уменьшения значения при клике на кнопку минуса
+            minusButtons.on('click', function () {
+                var input = $(this).next();
+                var count = parseInt(input.val());
+                if (count > 1) {
+                    input.val(count - 1);
+                    var shopCartId = $(this).closest('.productItem').data('shopcart-id');
+                    var productName = $(this).closest('.productItem').find('.products-element__name').text();
+                    changeItemCount(shopCartId, productName, count - 1);
+                    calculateTotalPrice();
+                }
+            });
+
+            // Обработчик события для увеличения значения при клике на кнопку плюса
+            plusButtons.on('click', function () {
+                var input = $(this).prev();
+                var count = parseInt(input.val());
+                if (count < 5) {
+                    input.val(count + 1);
+                    var shopCartId = $(this).closest('.productItem').data('shopcart-id');
+                    var productName = $(this).closest('.productItem').find('.products-element__name').text();
+                    changeItemCount(shopCartId, productName, count + 1);
+                    calculateTotalPrice();
+                }
+            });
+
+            function changeItemCount(shopCartId, productName, count) {
+                $.ajax({
+                    url: '/Cart/ChangeShopCartItemCount',
+                    type: 'POST',
+                    data: {
+                        shopCartId: shopCartId,
+                        productName: productName,
+                        count: count
+                    },
+                    success: function (response) {
+                        console.log('Изменение количества товара успешно отправлено на сервер');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Ошибка при отправке запроса на изменение количества товара:', error);
+                    }
+                });
+            }
+
+            // Обработчик события для удаления товара из корзины
+            $('.remove-icon').on('click', function () {
+                var productName = $(this).data('product-name');
+                deleteFromCart(productName);
+                $(this).closest('.productItem').remove();
+                calculateTotalPrice();
+            });
+
+            function deleteFromCart(productName) {
+                $.ajax({
+                    url: '/Cart/DeleteFromCart',
+                    type: 'POST',
+                    data: {
+                        productName: productName
+                    },
+                    success: function (response) {
+                        console.log('Товар успешно удален из корзины');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Ошибка при удалении товара из корзины:', error);
+                    }
+                });
+            }
+
+            // Расчет общей суммы
+            calculateTotalPrice();
+
+            function calculateTotalPrice() {
+                var totalPrice = 0;
+
+                $('.productItem').each(function () {
+                    var price = parseFloat($(this).find('.products-element__price').text());
+                    var count = parseInt($(this).find('.quantity-input').val());
+                    totalPrice += price * count;
+                });
+
+                $('#totalPrice').text(totalPrice.toFixed(2));
+            }
+
+            // Обработчик события для оформления заказа
+            $('.checkout-button').on('click', function () {
+                // Ваш код для оформления заказа
+                console.log('Оформление заказа');
+            });
+        });
+    </script>
+</body>
+
+</html>
